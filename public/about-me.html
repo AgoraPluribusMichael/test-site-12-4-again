@@ -180,20 +180,26 @@
       });
 
       // https://pluribus.me/s/username/sitename/path/to/page.html --> path/to/page
-      var pathname = window.location.pathname.split('/').slice(4).join("/").replace(".html", "");
-      if (!pathname) {
-        pathname = "index";
+      var pathName = window.location.pathname.split('/').slice(4).join("/").replace(".html", "");
+      if (!pathName) {
+        pathName = "index";
       }
 
       // Set tab title
       if (pagesJson) {
+        
+        // Convert site name to Title Case
+        let siteName = basePath.split('/')[3];
+        siteName = siteName.replace(/^-*(.)|-+(.)/g, (s, c, d) => c ? c.toUpperCase() : ' ' + d.toUpperCase())
+
+        // Get page displayName from pages.json
         for (const page of pagesJson) {
           const displayName = page.displayName;
           const fileName = page.fileName;
 
           let relPage;
           if (fileName === pathName) {
-            document.head.getElementsByTagName("title")[0].innerText = displayName;
+            document.head.getElementsByTagName("title")[0].innerText = `${siteName} • ${displayName}`;
             break;
           }
         }
@@ -202,7 +208,7 @@
       var panel = document.createElement("main");
       const errorMessage = "Could not fetch page content<br><br>O_o";
       try {
-        let fetchPathName = `${origin}${basePath}/${pathname}.md`;
+        let fetchPathName = `${origin}${basePath}/${pathName}.md`;
         const content = await fetch(fetchPathName, {
           method: "GET",
           headers: {
